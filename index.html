@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habit Tracker - Playful & Witty Palettes 🎮</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Neue', 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            padding: 40px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 60px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            animation: bounceIn 1s ease;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #FF6B8B, #FF8E53);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 0 rgba(255, 255, 255, 0.5);
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 15px;
+            border-radius: 15px;
+            border: 3px dashed #FF6B8B;
+        }
+
+        .emoji-decor {
+            font-size: 2rem;
+            margin: 10px 0;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .palettes-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 50px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .palette-card {
+            background: white;
+            border-radius: 25px;
+            padding: 35px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            border: 4px solid transparent;
+        }
+
+        .palette-card:hover {
+            transform: translateY(-10px) rotate(1deg);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .palette-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, var(--theme-color-1), var(--theme-color-2), var(--theme-color-3));
+            z-index: 2;
+        }
+
+        .palette-title {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px dotted #eee;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .palette-title .emoji {
+            font-size: 2.5rem;
+            animation: wiggle 2s infinite;
+        }
+
+        .color-display {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+
+        .color-item {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            padding: 15px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            background: rgba(248, 249, 250, 0.5);
+        }
+
+        .color-item:hover {
+            background: rgba(248, 249, 250, 0.9);
+            transform: scale(1.02);
+        }
+
+        .color-swatch {
+            width: 100px;
+            height: 100px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid white;
+        }
+
+        .color-swatch:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .color-swatch::after {
+            content: "👇 Click to copy!";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 5px;
+            font-size: 0.75rem;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .color-swatch:hover::after {
+            opacity: 1;
+        }
+
+        .color-info {
+            flex: 1;
+        }
+
+        .color-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .color-name .emoji-small {
+            font-size: 1.3rem;
+        }
+
+        .color-hex {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            padding: 10px 20px;
+            background: white;
+            border-radius: 12px;
+            display: inline-block;
+            border: 3px solid #eee;
+            font-family: 'Courier New', monospace;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .color-description {
+            color: #666;
+            line-height: 1.6;
+            font-size: 1.05rem;
+            font-style: italic;
+        }
+
+        .palette-footer {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+            border: 2px dashed #dee2e6;
+        }
+
+        .palette-footer h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .palette-footer h3 .emoji {
+            font-size: 1.8rem;
+        }
+
+        .palette-vibe {
+            color: #555;
+            line-height: 1.7;
+            font-size: 1.1rem;
+        }
+
+        .usage-hint {
+            background: linear-gradient(135deg, #ffe8f0 0%, #ffe0e9 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 30px;
+            border-left: 6px solid #FF6B8B;
+            font-size: 1rem;
+            color: #c2185b;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            animation: pulse 2s infinite;
+        }
+
+        .usage-hint::before {
+            content: "💥";
+            font-size: 1.8rem;
+            flex-shrink: 0;
+        }
+
+        /* First Palette: Game Day */
+        .palette-1 {
+            --theme-color-1: #FF6B8B;
+            --theme-color-2: #FFD166;
+            --theme-color-3: #06D6A0;
+            border-color: #FFD166;
+        }
+        
+        .palette-1 .swatch-bg {
+            background: #FFF9F0;
+            box-shadow: inset 0 0 0 3px #FFD166;
+        }
+        
+        .palette-1 .swatch-primary {
+            background: #FF6B8B;
+            box-shadow: 0 8px 25px rgba(255, 107, 139, 0.4);
+        }
+        
+        .palette-1 .swatch-secondary {
+            background: #FFD166;
+            box-shadow: 0 8px 25px rgba(255, 209, 102, 0.4);
+        }
+        
+        .palette-1 .swatch-accent {
+            background: #06D6A0;
+            box-shadow: 0 8px 25px rgba(6, 214, 160, 0.4);
+        }
+
+        /* Second Palette: Pixel Party */
+        .palette-2 {
+            --theme-color-1: #7B68EE;
+            --theme-color-2: #FF8E53;
+            --theme-color-3: #00D4AA;
+            border-color: #7B68EE;
+        }
+        
+        .palette-2 .swatch-bg {
+            background: #F0F8FF;
+            box-shadow: inset 0 0 0 3px #7B68EE;
+        }
+        
+        .palette-2 .swatch-primary {
+            background: #7B68EE;
+            box-shadow: 0 8px 25px rgba(123, 104, 238, 0.4);
+        }
+        
+        .palette-2 .swatch-secondary {
+            background: #FF8E53;
+            box-shadow: 0 8px 25px rgba(255, 142, 83, 0.4);
+        }
+        
+        .palette-2 .swatch-accent {
+            background: #00D4AA;
+            box-shadow: 0 8px 25px rgba(0, 212, 170, 0.4);
+        }
+
+        /* Animations */
+        @keyframes bounceIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            60% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            75% { transform: rotate(-5deg); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .palettes-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .color-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .color-swatch {
+                width: 100%;
+                height: 80px;
+            }
+            
+            .palette-card {
+                padding: 25px;
+            }
+            
+            .header h1 {
+                font-size: 2.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .color-hex {
+                font-size: 1.5rem;
+            }
+            
+            .palette-title {
+                font-size: 1.6rem;
+            }
+        }
+
+        .copied-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #333;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transform: translateY(-20px) scale(0.9);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border: 3px solid white;
+        }
+
+        .copied-notification.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .playful-button {
+            margin-top: 30px;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(45deg, #FF6B8B, #FF8E53);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(255, 107, 139, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .playful-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(255, 107, 139, 0.6);
+        }
+
+        .playful-button:active {
+            transform: translateY(0) scale(0.98);
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="header">
+        <h1>Habit Tracker Color Palettes 🚀</h1>
+        <div class="emoji-decor">🎯 🏆 🎨 ✨ 🚀</div>
+        <p>Forget boring habit tracking! These palettes are packed with personality to make building habits feel like winning a game. Each color has a job to do – and it does it with style! 😎</p>
+    </div>
+
+    <div class="palettes-container">
+        <!-- Palette 1: Game Day -->
+        <div class="palette-card palette-1">
+            <h2 class="palette-title">
+                <span class="emoji">🎮</span>
+                Palette 1: "Game Day"
+            </h2>
+            
+            <div class="color-display">
+                <div class="color-item">
+                    <div class="color-swatch swatch-bg" data-hex="#FFF9F0"></div>
+                    <div class="color-info">
+                        <div class="color-name">
+                            <span class="emoji-small">☁️</span>
+                            Cloud Nine Background
+                        </div>
+                        <div class="color-hex">#FFF9F0</div>
+                        <div class="color-description">"The cheerful off-white that makes your habits feel like they're floating on a happy cloud!"</div>
+                    </div>
+                </div>
+                
+                <div class="color-item">
+                    <div class="color-swatch swatch-primary" data-hex="#FF6B8B"></div>
+                    <div class="color-info">
+                        <div class="color-name">
+                            <span class="emoji-small">💖</span>
+                            Power-Up Pink
+                        </div>
+                        <div class="color-hex">#FF6B8B</div>
+                        <div class="color-description">"The 'Let's do this!' button color. So vibrant, it practically high-fives you when you tap it!"</div>
+                    </div>
+                </div>
+                
+                <div class="color-item">
+                    <div class="color-swatch swatch-secondary" data-hex="#FFD166"></div>
+                    <div class="color-info">
+                        <div class="color-name">
+                            <span class="emoji-small">⭐</span>
+                            Golden Streak
+                        </div>
+                        <div class="color-hex">#FFD166</div>
+                        <div class="color-description">"For that 7-day streak! Shines so bright you'll need sunglasses 😎 Perfect for achievements & progress bars."</div>
+                    </div>
+                </div>
+                
+                <div class="color-item">
+                    <div class="color-swatch swatch-accent" data-hex="#06D6A0"></div>
+                    <div class="color-info">
+                        <div class="color-name">
+                            <span class="emoji-small">✅</span>
+                            Success Sparkle
+                        </div>
+                        <div class="color-hex">#06D6A0</div>
+                        <div class="color-description">"The 'Nailed it!' confetti color. When you complete a habit, this green does a little victory dance!"</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="palette-footer">
+                <h3>
+                    <span class="emoji">🎯</span>
+                    Palette Personality
+                </h3>
+                <p class="palette-vibe">This palette turns habit-building into a video game! The Power-Up Pink gives you energy, Golden Streak celebrates wins, and Success Sparkle makes completion feel like leveling up. It's playful, energetic, and makes you want to keep playing (err... tracking!).</p>
+            </div>
+            
+            <div class="usage-hint">
+                <strong>Pro Tip:</strong> Use Power-Up Pink for "Add New Habit", Golden Streak for current streaks, and Success Sparkle with a ✓ emoji for completed tasks. Add confetti animations when habits are completed! 🎉
+            </div>
+        </div>
+
+        <!-- Palette 2: Pixel Party -->
+        <div class="palette-card palette-2">
+            <h2 class="palette-title">
+                <span class="emoji">✨</span>
+                Palette 2: "Pixel Party"
+            </h2>
+            
+            <div class="color-display">
+                <div class="color-item">
+                    <div class="color-swatch swatch-bg" data-hex="#F0F8FF"></div>
+                    <div class="color-info">
+                        <div class="color-name">
+                            <span class="emoji-small">🌤️</span>
+                            Morning Sky Background
+                        </div>
+                        <div class="color-hex">#F0F8FF</div>
+                        <div class="color-description">"The gentle blue-white that makes your morning habit check feel fresh and new - like a brand new day!"</div>
+                    </div>
+                </div>
+                
+                <div class="color-item">
+                    <div class="color-swatch swatch-primary" data-hex="#7B68EE"></div>
+                    <div class="color-info">
+                        <div class="color-name">
+                            <span class="emoji-small">👾</span>
+                            Pixel Purple
+                        </div>
+                        <div class="color-hex">#7B68EE</div>
+                        <div class="color-description">"The 'main character' color! Use it for navigation and primary actions. It's confident but fun!"</div>
+                    </div>
+                </div>
+                
+                <div class="color-item">
+                    <div class="color-swatch swatch-secondary" data-hex="#FF8E53"></div>
+                    <div class="color-info">
+                        <div class="color-name">
+                            <span class="emoji-small">🎉</span>
+                            Party Orange
+                        </div>
+                        <div class="color-hex">#FF8E53</div>
+                        <div class="color-description">"The 'celebrate everything' color! Missed a day? No problem - this orange says 'Let's try again tomorrow!'"</div>
+                    </div>
+                </div>
+                
+                <div class="color-item">
+                    <div class="color-swatch swatch-accent" data-hex="#00D4AA"></div>
+                    <div class="color-info">
+                        <div class="color-name">
+                            <span class="emoji-small">⚡</span>
+                            Electric Mint
+                        </div>
+                        <div class="color-hex">#00D4AA</div>
+                        <div class="color-description">"ZAP! That satisfying feeling when you complete a habit. This color has 'instant gratification' vibes!"</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="palette-footer">
+                <h3>
+                    <span class="emoji">🌈</span>
+                    Palette Personality
+                </h3>
+                <p class="palette-vibe">Imagine if your habit tracker was designed by friendly robots who love confetti! Pixel Purple keeps things organized, Party Orange brings the fun, and Electric Mint delivers that 'ping!' of satisfaction. It's retro-futuristic with a big smile 😊</p>
+            </div>
+            
+            <div class="usage-hint">
+                <strong>Pro Tip:</strong> Use Pixel Purple for headers, Party Orange for notifications and reminders, and Electric Mint with a ⚡ emoji for completed habits. Add pixel art icons for extra charm! 🎨
+            </div>
+        </div>
+    </div>
+
+    <button class="playful-button" onclick="showRandomTip()">
+        <span>🎲</span>
+        Get Random Design Tip
+    </button>
+
+    <div class="copied-notification" id="copiedNotification">Color copied! 🎨</div>
+
+    <script>
+        // Add click-to-copy functionality with fun messages
+        document.querySelectorAll('.color-swatch').forEach(swatch => {
+            swatch.addEventListener('click', function() {
+                const hexCode = this.getAttribute('data-hex');
+                
+                // Fun copy messages
+                const messages = [
+                    "Color copied! 🎨",
+                    "Nice choice! ✨",
+                    "Paste away! 📋",
+                    "Design power! 💪",
+                    "So vibrant! 🌈",
+                    "Hexcellent! 😎"
+                ];
+                
+                const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+                
+                // Copy to clipboard
+                navigator.clipboard.writeText(hexCode).then(() => {
+                    // Show notification
+                    const notification = document.getElementById('copiedNotification');
+                    notification.textContent = randomMessage;
+                    notification.classList.add('show');
+                    
+                    // Change notification color to match the copied color
+                    notification.style.background = `linear-gradient(45deg, ${hexCode}, ${adjustColor(hexCode, 20)})`;
+                    
+                    // Hide notification after 2 seconds
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 2000);
+                });
+            });
+        });
+
+        // Helper function to adjust color brightness
+        function adjustColor(hex, percent) {
+            let r = parseInt(hex.substring(1, 3), 16);
+            let g = parseInt(hex.substring(3, 5), 16);
+            let b = parseInt(hex.substring(5, 7), 16);
+            
+            r = Math.min(255, Math.max(0, r + percent));
+            g = Math.min(255, Math.max(0, g + percent));
+            b = Math.min(255, Math.max(0, b + percent));
+            
+            return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+        }
+
+        // Add fun animations to palette cards on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.palette-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px) rotate(-2deg)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0) rotate(0)';
+                }, index * 300);
+            });
+        });
+
+        // Random design tip button
+        function showRandomTip() {
+            const tips = [
+                "Add micro-interactions! A little bounce when completing a habit = instant joy 🏀",
+                "Use playful sound effects! A 'ding!' for completion, 'woosh!' for swiping 🔔",
+                "Create habit categories with fun emoji icons 🎵📚💪☕",
+                "Add a 'streak fire' animation that grows with each consecutive day 🔥",
+                "Use confetti explosions for weekly milestones 🎉",
+                "Create funny notifications: 'Your yoga habit misses you!' 🧘",
+                "Add a 'level up' system where habits unlock fun rewards 🏆",
+                "Use progress bars that turn into rainbows when full 🌈",
+                "Create a 'habit buddy' character that cheers you on 🤖",
+                "Add a daily motivational quote with a fun fact 📜"
+            ];
+            
+            const randomTip = tips[Math.floor(Math.random() * tips.length)];
+            alert(`💡 Design Tip:\n\n${randomTip}`);
+        }
+
+        // Add subtle hover effect to color items
+        document.querySelectorAll('.color-item').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.boxShadow = '0 8px 25px rgba(0,0,0,0.1)';
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                this.style.boxShadow = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
